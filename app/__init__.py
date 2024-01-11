@@ -1,1 +1,1 @@
-from .gs_reader import GSReader
+from .gs_reader import GSClientReader
