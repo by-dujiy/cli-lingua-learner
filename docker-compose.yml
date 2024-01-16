@@ -1,0 +1,31 @@
+version: '3'
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    ports:
+      - "5435:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    env_file:
+      - .env
+
+  pgadmin:
+    container_name: cli_ll
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PG_DEF_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PG_PASSWORD}
+    ports:
+      - "8081:80"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    env_file:
+      - .env
+
+volumes:
+  db-data:
+  pgadmin-data:
