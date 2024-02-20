@@ -1,12 +1,21 @@
+import os
 import gspread
 from typing import List
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
+GSA_FILE = os.environ.get('GSA_FILE_NAME')
+TAB_KEY = os.environ.get('TAB_KEY')
 
 
 class GSClientReader:
-    def __init__(self, sa_file: str, tab_key: str):
+    def __init__(self, sa_file=GSA_FILE, tab_key=TAB_KEY):
         """
         Initializes a Google Spreadsheet instance
-        Create connection with Google Spreadsheet by key of the Google Sheets tab
+        Create connection with Google Spreadsheet by key of the Google Sheets
+        tab
 
         :param sa_file: Name of the service account file.
         :param tab_key: The key of the Google Spreadsheet
