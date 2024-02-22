@@ -1,16 +1,25 @@
 import interface_model as im
 
+
+def mock_func():
+    print("something's going on")
+
+
 main_menu = im.Interface("MAIN MENU")
 download_new = im.Interface("Download new")
-display_available = im.Interface("Display available")
+display_available = im.PerformInterface("Display available...", mock_func)
 back = im.Interface("Back")
 google_sheets = im.Interface("Google Sheets")
 excel = im.Interface("Excel")
-load_file = im.Interface("Load file")
-available_colletions = im.Interface("List of available collections...")
-default_table = im.Interface("Display default table...")
-connect_new = im.Interface("Connect to new table...")
-table_list_content = im.Interface("List of sheets from table")
+load_file = im.PerformInterface("Load file...", mock_func)
+available_colletions = im.PerformInterface("List of available collections...",
+                                           mock_func)
+default_table = im.PerformInterface("Display default table...",
+                                    mock_func)
+connect_new = im.PerformInterface("Connect to new table...",
+                                  mock_func)
+table_list_content = im.PerformInterface("List of sheets from table",
+                                         mock_func)
 
 
 main_menu.add_option(1, im.Option("Download new collection", download_new))
@@ -35,15 +44,19 @@ excel.add_option(1, im.Option("Load file", load_file))
 excel.add_option(0, im.Option("Back", back))
 excel.add_option('*', im.Option("Main menu", main_menu))
 
-# table_list_content.add_option()
-
-
-def prev_ui():
-    pass
-
+interface_collection = [
+    main_menu,
+    download_new,
+    display_available,
+    back,
+    google_sheets,
+    excel,
+    load_file,
+    available_colletions,
+    default_table,
+    connect_new,
+    table_list_content]
 
 if __name__ == '__main__':
-    ls = [1, 2, 3, 4]
-    ls.pop()
-    print(ls)
-    print(ls.pop())
+    cli = im.DialogController(interface_collection)
+    cli.run_cli()

@@ -1,7 +1,3 @@
-def same_function():
-    return "i'm work!"
-
-
 class Option:
     def __init__(self, msg, option_interface):
         self.msg = msg
@@ -54,6 +50,9 @@ class PerformInterface(Interface):
 class DialogController:
     call_stack = []
 
+    def __init__(self, ui_collection):
+        self.ui_collection = ui_collection
+
     def execute_interface(self, ui):
         if ui.name == "Back":
             ui = self.prev_ui()
@@ -68,3 +67,6 @@ class DialogController:
     def prev_ui(self):
         self.call_stack.pop()
         return self.call_stack.pop()
+
+    def run_cli(self):
+        self.execute_interface(self.ui_collection[0])
