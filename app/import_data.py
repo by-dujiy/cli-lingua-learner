@@ -1,6 +1,6 @@
 from gs_reader import GSClientReader
-from db import Model, Session, engine
-from models import WordsPair, Translation
+from db import Model, engine
+# from models import WordsPair, Translation
 
 
 def download_from_gs():
@@ -13,4 +13,4 @@ def fill_db():
     Model.metadata.drop_all(engine)
     Model.metadata.create_all(engine)
 
-    input_data = download_from_gs()
+    # input_data = download_from_gs()
