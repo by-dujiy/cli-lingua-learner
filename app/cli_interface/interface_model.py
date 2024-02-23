@@ -8,12 +8,17 @@ class Option:
 
 
 class Interface:
-    def __init__(self, name) -> None:
+    def __init__(self, name, parent=None) -> None:
         self.name = name
         self.options_set = {}
+        self.parent = parent
 
     def add_option(self, key, option):
         self.options_set[key] = option
+
+    def add_back_option(self):
+        if self.parent:
+            self.add_option(0, Option("Back", self.parent))
 
     def print_interface(self):
         print(self.name)
@@ -47,6 +52,31 @@ class PerformInterface(Interface):
         return f"<PerformInterface '{self.name}'> func:{self.func.__name__}"
 
 
+class Interface_v2:
+    def __init__(self, interface, parent_interface=None):
+        self.interface = interface
+        self.parent_interface = parent_interface
+        self.entry_point = parent_interface is None
+        self.default_option = {}
+        self.generated_options = {}
+
+        if self.entry_point is not True:
+            self.default_option[0] = 'Back option'
+
+        if (self.parent_interface and
+                self.parent_interface.entry_point is not True):
+            self.default_option['*'] = 'Main menue'
+
+    def get_option_set(self):
+        return {**self.generated_options, **self.default_option}
+
+    def __repr__(self):
+        return (f"<[UI]: {self.interface}, "
+                f"parent: {self.parent_interface}, "
+                f"entry_point: {self.entry_point}, "
+                f"options: {self.get_option_set()}>")
+
+
 class DialogController:
     call_stack = []
 
@@ -70,3 +100,12 @@ class DialogController:
 
     def run_cli(self):
         self.execute_interface(self.ui_collection[0])
+
+
+if __name__ == '__main__':
+    ui = Interface_v2('ui')
+    print(ui)
+    ui2 = Interface_v2('ui2', ui)
+    print(ui2)
+    ui3 = Interface_v2('ui3', ui2)
+    print(ui3)
