@@ -1,112 +1,68 @@
-class Option:
-    def __init__(self, msg, option_interface):
-        self.msg = msg
-        self.option_interface = option_interface
-
-    def __repr__(self):
-        return f"<Option {self.option_interface}>"
-
-
 class Interface:
-    def __init__(self, name, parent=None) -> None:
+    def __init__(self, name, func=None, parent=None, entry_point=False):
         self.name = name
-        self.options_set = {}
-        self.parent = parent
-
-    def add_option(self, key, option):
-        self.options_set[key] = option
-
-    def add_back_option(self):
-        if self.parent:
-            self.add_option(0, Option("Back", self.parent))
-
-    def print_interface(self):
-        print(self.name)
-        for n, option in self.options_set.items():
-            print(f"{n}. {option.msg}")
-
-    def cli_request(self):
-        while True:
-            result = input("select the option:\n")
-            if result.isdigit():
-                result = int(result)
-            if result in self.options_set:
-                break
-            else:
-                print('incorrect option, try again')
-        return result
-
-    def __repr__(self):
-        return f"<Interface '{self.name}'> option items:\n{self.options_set}"
-
-
-class PerformInterface(Interface):
-    def __init__(self, name, func):
-        Interface.__init__(self, name)
         self.func = func
+        self.entry_point = entry_point
+        self.parent = parent
+        self.option_count = 1
+        self.default_options = {}
+        self.additional_options = {}
 
-    def execute(self):
-        self.func()
+    def add_option(self, *options):
+        for n, option in enumerate(options, 1):
+            self.additional_options[n] = option
+
+        if self.parent:
+            self.default_options['-'] = Interface('Back')
+            if not self.parent.entry_point:
+                self.default_options[0] = Interface('Main menue')
+
+    def option_set(self):
+        return {**self.additional_options, **self.default_options}
+
+    def get_parent(self):
+        return self.parent
+
+    def get_option(self, key):
+        return self.additional_options[key]
 
     def __repr__(self):
-        return f"<PerformInterface '{self.name}'> func:{self.func.__name__}"
-
-
-# class Interface_v2:
-#     def __init__(self, interface, parent_interface=None):
-#         self.interface = interface
-#         self.parent_interface = parent_interface
-#         self.entry_point = parent_interface is None
-#         self.default_option = {}
-#         self.generated_options = {}
-
-#         if self.entry_point is not True:
-#             self.default_option[0] = 'Back option'
-
-#         if (self.parent_interface and
-#                 self.parent_interface.entry_point is not True):
-#             self.default_option['*'] = 'Main menue'
-
-#     def get_option_set(self):
-#         return {**self.generated_options, **self.default_option}
-
-#     def __repr__(self):
-#         return (f"<[UI]: {self.interface}, "
-#                 f"parent: {self.parent_interface}, "
-#                 f"entry_point: {self.entry_point}, "
-#                 f"options: {self.get_option_set()}>")
+        return (f"<Interface '{self.name}', func: {self.func}, entry_point: "
+                f" {self.entry_point}, parent: "
+                f"[{self.parent.name if self.parent else None}]> "
+                f"additional_optionals: {self.additional_options}"
+                f"default_options: {self.default_options}")
 
 
 class DialogController:
-    call_stack = []
-
-    def __init__(self, ui_collection):
-        self.ui_collection = ui_collection
+    def __init__(self, main_interface):
+        self.main_interface = main_interface
+        self.back_option = None
+        self.go_main_option = None
 
     def execute_interface(self, ui):
-        if ui.name == "Back":
-            ui = self.prev_ui()
+        print(ui.name)
+        for key, option in ui.option_set().items():
+            print(key, option.name)
 
-        ui.print_interface()
-        if isinstance(ui, PerformInterface):
-            ui.execute()
-        res = ui.cli_request()
-        self.call_stack.append(ui)
-        self.execute_interface(ui.options_set[res].option_interface)
+        while True:
+            user_response = input('select the option:\n')
+            if user_response.isdigit():
+                user_response = int(user_response)
+            if user_response in ui.option_set():
+                break
+            else:
+                print('incorrect option, try again')
 
-    def prev_ui(self):
-        self.call_stack.pop()
-        return self.call_stack.pop()
+        if user_response == 0:
+            next_ui = self.main_interface
+        elif user_response == '-':
+            next_ui = ui.get_parent()
+        else:
+            next_ui = ui.get_option(user_response)
+        return next_ui
 
-    def run_cli(self):
-        self.execute_interface(self.ui_collection[0])
-
-
-if __name__ == '__main__':
-    # ui = Interface_v2('ui')
-    # print(ui)
-    # ui2 = Interface_v2('ui2', ui)
-    # print(ui2)
-    # ui3 = Interface_v2('ui3', ui2)
-    # print(ui3)
-    pass
+    def run_cli(self, ui):
+        ui.func() if ui.func else None
+        res_ui = self.execute_interface(ui)
+        self.run_cli(res_ui)
