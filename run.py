@@ -21,4 +21,5 @@ google_sheets.add_option(default_table, connect_new)
 
 
 if __name__ == "__main__":
-    print(display_available)
+    dc = DialogController(main_menu)
+    dc.run_cli(main_menu)
