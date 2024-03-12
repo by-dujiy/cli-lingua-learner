@@ -10,6 +10,7 @@ class Interface:
 
     def add_option(self, *options):
         for n, option in enumerate(options, 1):
+            option.set_parent(self)
             self.additional_options[n] = option
 
         if self.parent:
@@ -19,6 +20,9 @@ class Interface:
 
     def option_set(self):
         return {**self.additional_options, **self.default_options}
+
+    def set_parent(self, parent_interface):
+        self.parent = parent_interface
 
     def get_parent(self):
         return self.parent
