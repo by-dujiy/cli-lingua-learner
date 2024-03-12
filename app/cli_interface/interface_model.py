@@ -52,29 +52,29 @@ class PerformInterface(Interface):
         return f"<PerformInterface '{self.name}'> func:{self.func.__name__}"
 
 
-class Interface_v2:
-    def __init__(self, interface, parent_interface=None):
-        self.interface = interface
-        self.parent_interface = parent_interface
-        self.entry_point = parent_interface is None
-        self.default_option = {}
-        self.generated_options = {}
+# class Interface_v2:
+#     def __init__(self, interface, parent_interface=None):
+#         self.interface = interface
+#         self.parent_interface = parent_interface
+#         self.entry_point = parent_interface is None
+#         self.default_option = {}
+#         self.generated_options = {}
 
-        if self.entry_point is not True:
-            self.default_option[0] = 'Back option'
+#         if self.entry_point is not True:
+#             self.default_option[0] = 'Back option'
 
-        if (self.parent_interface and
-                self.parent_interface.entry_point is not True):
-            self.default_option['*'] = 'Main menue'
+#         if (self.parent_interface and
+#                 self.parent_interface.entry_point is not True):
+#             self.default_option['*'] = 'Main menue'
 
-    def get_option_set(self):
-        return {**self.generated_options, **self.default_option}
+#     def get_option_set(self):
+#         return {**self.generated_options, **self.default_option}
 
-    def __repr__(self):
-        return (f"<[UI]: {self.interface}, "
-                f"parent: {self.parent_interface}, "
-                f"entry_point: {self.entry_point}, "
-                f"options: {self.get_option_set()}>")
+#     def __repr__(self):
+#         return (f"<[UI]: {self.interface}, "
+#                 f"parent: {self.parent_interface}, "
+#                 f"entry_point: {self.entry_point}, "
+#                 f"options: {self.get_option_set()}>")
 
 
 class DialogController:
@@ -103,9 +103,10 @@ class DialogController:
 
 
 if __name__ == '__main__':
-    ui = Interface_v2('ui')
-    print(ui)
-    ui2 = Interface_v2('ui2', ui)
-    print(ui2)
-    ui3 = Interface_v2('ui3', ui2)
-    print(ui3)
+    # ui = Interface_v2('ui')
+    # print(ui)
+    # ui2 = Interface_v2('ui2', ui)
+    # print(ui2)
+    # ui3 = Interface_v2('ui3', ui2)
+    # print(ui3)
+    pass
