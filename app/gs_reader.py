@@ -33,7 +33,7 @@ class GSClientReader:
         """
         return self.sh.worksheets()
 
-    def get_gs_data(self, worksheet: gspread.Worksheet) -> List[List[str]]:
+    def get_ws_data(self, worksheet: gspread.Worksheet) -> List[List[str]]:
         """
         Get data from a particular worksheet.
 
@@ -41,4 +41,17 @@ class GSClientReader:
         :return: A list of lists containing the data
         """
         ws = self.sh.get_worksheet_by_id(worksheet.id)
-        return ws.get_all_values()
+        result = []
+        for item in ws.get_all_values():
+            buffer_list = []
+            for sub_item in item:
+                if sub_item:
+                    if ',' in sub_item:
+                        units = sub_item.split(',')
+                        for unit in units:
+                            buffer_list.append(unit.strip().lower())
+                    else:
+                        buffer_list.append(sub_item)
+            result.append(buffer_list)
+
+        return result

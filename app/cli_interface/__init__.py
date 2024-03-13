@@ -1,1 +1,1 @@
-from .interface_model import Interface, DialogController
+from .interface_model import Interface, DialogController, GSInterface
