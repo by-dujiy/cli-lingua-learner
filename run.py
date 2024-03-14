@@ -28,9 +28,9 @@ google_sheets.add_option(default_table, connect_new)
 
 
 if __name__ == "__main__":
-    # dc = DialogController(main_menu)
-    # dc.run_cli(main_menu)
-    x = gsr.get_ws_list()
-    b = gsr.get_ws_data(x[0])
-    for i in b:
-        print(i)
+    dc = DialogController(main_menu)
+    dc.run_cli(main_menu)
+    # x = gsr.get_ws_list()
+    # b = gsr.get_ws_data(x[0])
+    # for i in b:
+    #     print(i)

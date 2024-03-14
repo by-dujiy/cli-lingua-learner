@@ -33,7 +33,9 @@ class GSClientReader:
         """
         return self.sh.worksheets()
 
-    def get_ws_data(self, worksheet: gspread.Worksheet) -> List[List[str]]:
+    def get_ws_data(self,
+                    worksheet: gspread.Worksheet,
+                    delimiter=',') -> List[List[str]]:
         """
         Get data from a particular worksheet.
 
@@ -46,12 +48,11 @@ class GSClientReader:
             buffer_list = []
             for sub_item in item:
                 if sub_item:
-                    if ',' in sub_item:
-                        units = sub_item.split(',')
+                    if delimiter in sub_item:
+                        units = sub_item.split(delimiter)
                         for unit in units:
                             buffer_list.append(unit.strip().lower())
                     else:
                         buffer_list.append(sub_item)
             result.append(buffer_list)
-
         return result

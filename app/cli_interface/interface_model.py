@@ -77,10 +77,10 @@ class GSInterface(Interface):
             options.append(Interface(ws.title, content_module=ws))
         return super().add_option(*options)
 
-    def get_content(self, worksheet):
+    def print_content(self, worksheet):
         res = self.proc_func(worksheet)
-        for item in res:
-            print(item)
+        for n, item in enumerate(res, start=1):
+            print(f"\t{n}) {item[0]} - {', '.join(item[1:])}")
 
     def execute_interface(self):
         print(self.name)
@@ -102,7 +102,7 @@ class GSInterface(Interface):
             next_ui = self.get_parent()
         else:
             user_ws = self.get_option(user_response)
-            self.get_content(user_ws.content_module)
+            self.print_content(user_ws.content_module)
             next_ui = Interface('Save collection', parent=self)
             next_ui.add_option()
         return next_ui
