@@ -35,8 +35,11 @@ class Interface:
     def get_option(self, key):
         return self.additional_options[key]
 
-    def execute_interface(self):
+    def print_content(self):
         print(self.name)
+
+    def execute_interface(self):
+        self.print_content()
         for key, option in self.get_option_set().items():
             print(key, option.name)
 

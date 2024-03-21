@@ -25,7 +25,7 @@ class GSClientReader:
         self.gs = gspread.service_account(self.client)
         self.sh = self.gs.open_by_key(self.tab_key)
 
-    def get_ws_list(self) -> List[gspread.Worksheet]:
+    def get_worksheets(self) -> List[gspread.Worksheet]:
         """
         Get a list of all worksheets in the spreadsheet
 

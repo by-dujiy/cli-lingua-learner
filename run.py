@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
-from app.cli_interface import Interface, DialogController, GSInterface
+from app import Interface, DialogController, GSInterface
 from app import GSClientReader
+
 
 load_dotenv()
 
@@ -14,7 +15,7 @@ excel_menu = Interface('Ecxel')
 load_file = Interface('Load file')
 google_sheets = Interface('Google Sheets')
 default_table = GSInterface('Display default table',
-                            func=gsr.get_ws_list,
+                            func=gsr.get_worksheets,
                             parent=google_sheets,
                             proc_func=gsr.get_ws_data)
 default_table.add_option()
