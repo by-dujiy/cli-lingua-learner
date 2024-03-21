@@ -1,3 +1,6 @@
+from .gs_reader import GSClientReader
+
+
 class Interface:
     def __init__(self,
                  name,
@@ -38,6 +41,20 @@ class Interface:
     def print_content(self):
         print(self.name)
 
+    def get_user_responce(self):
+        for key, option in self.get_option_set().items():
+            print(key, option.name)
+
+        while True:
+            user_response = input('select the option:\n')
+            if user_response.isdigit():
+                user_response = int(user_response)
+            if user_response in self.get_option_set():
+                break
+            else:
+                print('incorrect option, try again')
+        return user_response
+
     def execute_interface(self):
         self.print_content()
         for key, option in self.get_option_set().items():
@@ -53,7 +70,7 @@ class Interface:
                 print('incorrect option, try again')
 
         if user_response == 0:
-            next_ui = self.main_interface
+            next_ui = self.default_options[0]
         elif user_response == '-':
             next_ui = self.get_parent()
         else:
@@ -111,10 +128,56 @@ class GSInterface(Interface):
         return next_ui
 
 
+class GoogleSheetsInterface(Interface):
+    def __init__(self, name, parent, new_table=False) -> None:
+        Interface.__init__(self, name, parent)
+        self.new_table = new_table
+
+    def execute_interface(self):
+        print(self.name)
+        if self.new_table:
+            tab_link = input('Enter your tab link')
+            print('connect to new table:\n', tab_link)
+            gs_reader = GSClientReader(tab_link=tab_link)
+        else:
+            gs_reader = GSClientReader()
+
+        ws_list = gs_reader.get_worksheets()
+        for n, ws in enumerate(ws_list, 1):
+            print(f"{n}. {ws.title}")
+
+        while True:
+            user_responce = int(input('select the option:\n'))
+            if user_responce in range(1, (len(ws_list)+1)):
+                break
+            else:
+                print('incorrect option, try again')
+
+        ws_data = gs_reader.get_ws_data(ws_list[user_responce-1])
+        for n, data in enumerate(ws_data, 1):
+            print(f" - {n}. {data[0]}: {', '.join(data[1:])}")
+
+        self.add_option(Interface('Save collection'))
+
+        user_response = self.get_user_responce()
+
+        if user_response == 0:
+            next_ui = self.default_options[0]
+        elif user_response == '-':
+            next_ui = self.get_parent()
+        else:
+            collection_name = input('Enter collection name:\n')
+            print(f"Saving to database collection '{collection_name}'")
+            next_ui = self.default_options[0]
+        return next_ui
+
+
 class DialogController:
     def __init__(self, main_interface):
         self.main_interface = main_interface
 
     def run_cli(self, ui):
         res_ui = ui.execute_interface()
+        if res_ui.name == 'Main menue':
+            res_ui = self.main_interface
         self.run_cli(res_ui)

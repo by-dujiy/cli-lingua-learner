@@ -7,11 +7,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 GSA_FILE = os.environ.get('GSA_FILE_NAME')
-TAB_KEY = os.environ.get('TAB_KEY')
+TAB_LINK = os.environ.get('TAB_LINK')
 
 
 class GSClientReader:
-    def __init__(self, sa_file=GSA_FILE, tab_key=TAB_KEY):
+    def __init__(self, sa_file=GSA_FILE, tab_link=TAB_LINK):
         """
         Initializes a Google Spreadsheet instance
         Create connection with Google Spreadsheet by key of the Google Sheets
@@ -21,9 +21,9 @@ class GSClientReader:
         :param tab_key: The key of the Google Spreadsheet
         """
         self.client = sa_file
-        self.tab_key = tab_key
+        self.tab_link = tab_link
         self.gs = gspread.service_account(self.client)
-        self.sh = self.gs.open_by_key(self.tab_key)
+        self.sh = self.gs.open_by_url(self.tab_link)
 
     def get_worksheets(self) -> List[gspread.Worksheet]:
         """
@@ -42,6 +42,7 @@ class GSClientReader:
         :param worksheet: the worksheet object.
         :return: A list of lists containing the data
         """
+        print('connecting to', worksheet.title)
         ws = self.sh.get_worksheet_by_id(worksheet.id)
         result = []
         for item in ws.get_all_values():
