@@ -57,18 +57,7 @@ class Interface:
 
     def execute_interface(self):
         self.print_content()
-        for key, option in self.get_option_set().items():
-            print(key, option.name)
-
-        while True:
-            user_response = input('select the option:\n')
-            if user_response.isdigit():
-                user_response = int(user_response)
-            if user_response in self.get_option_set():
-                break
-            else:
-                print('incorrect option, try again')
-
+        user_response = self.get_user_responce()
         if user_response == 0:
             next_ui = self.default_options[0]
         elif user_response == '-':
@@ -104,17 +93,7 @@ class GSInterface(Interface):
 
     def execute_interface(self):
         print(self.name)
-        for key, option in self.get_option_set().items():
-            print(key, option.name)
-
-        while True:
-            user_response = input('select the option:\n')
-            if user_response.isdigit():
-                user_response = int(user_response)
-            if user_response in self.get_option_set():
-                break
-            else:
-                print('incorrect option, try again')
+        user_response = self.get_user_responce()
 
         if user_response == 0:
             next_ui = self.main_interface
@@ -134,7 +113,7 @@ class GoogleSheetsInterface(Interface):
         self.new_table = new_table
 
     def execute_interface(self):
-        print(self.name)
+        self.print_content()
         if self.new_table:
             tab_link = input('Enter your tab link')
             print('connect to new table:\n', tab_link)
@@ -157,7 +136,7 @@ class GoogleSheetsInterface(Interface):
         for n, data in enumerate(ws_data, 1):
             print(f" - {n}. {data[0]}: {', '.join(data[1:])}")
 
-        self.add_option(Interface('Save collection'))
+        self.add_option(DBInterface('Save to...', parent=self))
 
         user_response = self.get_user_responce()
 
@@ -166,9 +145,27 @@ class GoogleSheetsInterface(Interface):
         elif user_response == '-':
             next_ui = self.get_parent()
         else:
-            collection_name = input('Enter collection name:\n')
-            print(f"Saving to database collection '{collection_name}'")
+            next_ui = self.get_option(user_response)
+        return next_ui
+
+
+class DBInterface(Interface):
+    def __init__(self, name, parent=None):
+        super().__init__(name, parent)
+
+    def execute_interface(self):
+        self.print_content()
+        new_collection = Interface('Create new collection')
+        exist_collection = Interface('Add to existing collection')
+        self.add_option(new_collection, exist_collection)
+        user_response = self.get_user_responce()
+        if user_response == 0:
             next_ui = self.default_options[0]
+        elif user_response == '-':
+            next_ui = self.get_parent()
+        elif user_response == 1:
+            collection_name = input('Enter the name for the new collection')
+            next_ui = self.get_option(user_response)
         return next_ui
 
 

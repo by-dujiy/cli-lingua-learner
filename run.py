@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from app import Interface, DialogController, GSInterface, GoogleSheetsInterface
+from app import Interface, DialogController, GoogleSheetsInterface
 from app import GSClientReader
 
 

@@ -1,12 +1,8 @@
-from gs_reader import GSClientReader
-from db import Model, engine
-# from models import WordsPair, Translation
+from db import Session, Model, engine
+from models import WordsPair, Translation, Collection
 
 
-def download_from_gs():
-    reader = GSClientReader()
-    ws_list = reader.get_ws_list()
-    return reader.get_gs_data(ws_list[3])
+session = Session()
 
 
 def fill_db():
@@ -14,3 +10,7 @@ def fill_db():
     Model.metadata.create_all(engine)
 
     # input_data = download_from_gs()
+
+
+def create_collection(name):
+    session.add(Collection(name=name))
