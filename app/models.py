@@ -1,4 +1,4 @@
-from db import Model
+from .db import Model
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -7,7 +7,7 @@ class Collection(Model):
     __tablename__ = 'collections'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(64), index=True, uique=True)
+    name: Mapped[str] = mapped_column(String(64), index=True, unique=True)
 
     wordspairs: Mapped[list['WordsPair']] = relationship(
         cascade='all, delete-orphan', back_populates='collection')

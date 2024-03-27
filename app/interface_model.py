@@ -1,4 +1,5 @@
 from .gs_reader import GSClientReader
+from .import_data import create_collection, fill_collection
 
 
 class Interface:
@@ -74,43 +75,11 @@ class Interface:
                 f"default_options: {self.default_options}")
 
 
-class GSInterface(Interface):
-    def __init__(self, name, func, parent, proc_func=None):
-        Interface.__init__(self, name, func, parent=parent)
-        self.proc_func = proc_func
-
-    def add_option(self):
-        options = []
-        ws_list = self.func()
-        for ws in ws_list:
-            options.append(Interface(ws.title, content_module=ws))
-        return super().add_option(*options)
-
-    def print_content(self, worksheet):
-        res = self.proc_func(worksheet)
-        for n, item in enumerate(res, start=1):
-            print(f"\t{n}) {item[0]} - {', '.join(item[1:])}")
-
-    def execute_interface(self):
-        print(self.name)
-        user_response = self.get_user_responce()
-
-        if user_response == 0:
-            next_ui = self.main_interface
-        elif user_response == '-':
-            next_ui = self.get_parent()
-        else:
-            user_ws = self.get_option(user_response)
-            self.print_content(user_ws.content_module)
-            next_ui = Interface('Save collection', parent=self)
-            next_ui.add_option()
-        return next_ui
-
-
 class GoogleSheetsInterface(Interface):
     def __init__(self, name, parent, new_table=False) -> None:
         Interface.__init__(self, name, parent)
         self.new_table = new_table
+        self.table_content = []
 
     def execute_interface(self):
         self.print_content()
@@ -132,8 +101,8 @@ class GoogleSheetsInterface(Interface):
             else:
                 print('incorrect option, try again')
 
-        ws_data = gs_reader.get_ws_data(ws_list[user_responce-1])
-        for n, data in enumerate(ws_data, 1):
+        self.table_content = gs_reader.get_ws_data(ws_list[user_responce-1])
+        for n, data in enumerate(self.table_content, 1):
             print(f" - {n}. {data[0]}: {', '.join(data[1:])}")
 
         self.add_option(DBInterface('Save to...', parent=self))
@@ -160,12 +129,14 @@ class DBInterface(Interface):
         self.add_option(new_collection, exist_collection)
         user_response = self.get_user_responce()
         if user_response == 0:
-            next_ui = self.default_options[0]
+            next_ui = self.default_options[user_response]
         elif user_response == '-':
             next_ui = self.get_parent()
         elif user_response == 1:
-            collection_name = input('Enter the name for the new collection')
-            next_ui = self.get_option(user_response)
+            collection_name = input('Enter the name for the new collection:\n')
+            create_collection(collection_name)
+            fill_collection(collection_name, self.parent.table_content)
+            next_ui = self.default_options[0]
         return next_ui
 
 
