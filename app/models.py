@@ -30,6 +30,14 @@ class WordsPair(Model):
     translations: Mapped[list['Translation']] = relationship(
         cascade='all, delete-orphan', back_populates='wordspair')
 
+    def __eq__(self, other):
+        if isinstance(other, WordsPair):
+            return self.word == other.word
+        return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
     def __repr__(self):
         return f"WordsPair({self.id}, '{self.word}')"
 

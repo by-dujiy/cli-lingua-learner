@@ -33,13 +33,17 @@ def create_collection(name):
 
 
 def fill_collection(collection_name, content):
+    """
+    Fill the collection with unique instances of WordsPair
+    """
     with Session() as session:
         with session.begin():
             c = session.scalar(select(Collection)
                                .where(Collection.name == collection_name))
             for row in content:
                 wp = WordsPair(word=row.pop(0))
-                c.wordspairs.append(wp)
-                for item in row:
-                    t = Translation(translation_word=item)
-                    wp.translations.append(t)
+                if wp not in c.wordspairs:
+                    c.wordspairs.append(wp)
+                    for item in row:
+                        t = Translation(translation_word=item)
+                        wp.translations.append(t)
