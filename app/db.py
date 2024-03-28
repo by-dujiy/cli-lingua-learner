@@ -17,5 +17,5 @@ class Model(DeclarativeBase):
     })
 
 
-engine = create_engine(os.environ.get("DATABASE_URL"), echo=True)
+engine = create_engine(os.environ.get("DATABASE_URL"))
 Session = sessionmaker(bind=engine)
