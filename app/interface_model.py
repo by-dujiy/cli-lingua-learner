@@ -92,6 +92,9 @@ class Interface:
 
 
 class GoogleSheetsInterface(Interface):
+    """
+    Interface for interracting with Google Sheets
+    """
     def __init__(self, name, parent, new_table=False) -> None:
         Interface.__init__(self, name, parent)
         self.new_table = new_table
@@ -135,6 +138,9 @@ class GoogleSheetsInterface(Interface):
 
 
 class DBInterface(Interface):
+    """
+    Interface for interracting with database
+    """
     def __init__(self, name, parent=None):
         super().__init__(name, parent)
 
