@@ -1,5 +1,10 @@
 from dotenv import load_dotenv
-from app import Interface, DialogController, GoogleSheetsInterface
+from app import (
+    Interface,
+    DialogController,
+    GoogleSheetsInterface,
+    XLSXInterface
+    )
 from app import fill_db
 
 load_dotenv()
@@ -13,13 +18,13 @@ load_file = Interface('Load file')
 google_sheets = Interface('Google Sheets')
 default_table = GoogleSheetsInterface('Display default table',
                                       parent=google_sheets)
-connect_new = Interface('Connect to new table')
-
+xlsx_table = XLSXInterface('Read xlsx file', load_file)
 
 main_menu.add_option(download_new, display_available)
 download_new.add_option(google_sheets, excel_menu)
 excel_menu.add_option(load_file)
-google_sheets.add_option(default_table, connect_new)
+google_sheets.add_option(default_table)
+load_file.add_option(xlsx_table)
 
 
 if __name__ == "__main__":

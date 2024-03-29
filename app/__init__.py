@@ -1,8 +1,14 @@
-from .gs_reader import GSClientReader
+from .data_reader import (
+    GSClientReader,
+    load_xlsx,
+    get_sheetnames,
+    processing_xlsx_sheet
+    )
 from .interface_model import (
     Interface,
     DialogController,
-    GoogleSheetsInterface
+    GoogleSheetsInterface,
+    XLSXInterface
     )
 from .import_data import (
     fill_db

@@ -1,4 +1,9 @@
-from .gs_reader import GSClientReader
+from .data_reader import (
+    GSClientReader,
+    load_xlsx,
+    get_sheetnames,
+    processing_xlsx_sheet
+    )
 from .import_data import create_collection, fill_collection
 from typing import Optional, Union, Dict
 
@@ -95,19 +100,13 @@ class GoogleSheetsInterface(Interface):
     """
     Interface for interracting with Google Sheets
     """
-    def __init__(self, name, parent, new_table=False) -> None:
+    def __init__(self, name, parent) -> None:
         Interface.__init__(self, name, parent)
-        self.new_table = new_table
         self.table_content = []
 
     def execute_interface(self):
         self.print_content()
-        if self.new_table:
-            tab_link = input('Enter your tab link')
-            print('connect to new table:\n', tab_link)
-            gs_reader = GSClientReader(tab_link=tab_link)
-        else:
-            gs_reader = GSClientReader()
+        gs_reader = GSClientReader()
 
         ws_list = gs_reader.get_worksheets()
         for n, ws in enumerate(ws_list, 1):
@@ -121,6 +120,50 @@ class GoogleSheetsInterface(Interface):
                 print('incorrect option, try again')
 
         self.table_content = gs_reader.get_ws_data(ws_list[user_responce-1])
+        for n, data in enumerate(self.table_content, 1):
+            print(f" - {n}. {data[0]}: {', '.join(data[1:])}")
+
+        self.add_option(DBInterface('Save to...', parent=self))
+
+        user_response = self.get_user_responce()
+
+        if user_response == 0:
+            next_ui = self.default_options[0]
+        elif user_response == '-':
+            next_ui = self.get_parent()
+        else:
+            next_ui = self.get_option(user_response)
+        return next_ui
+
+
+class XLSXInterface(Interface):
+    """
+    Interface for interrcating with xls files
+    """
+    def __init__(self, name, parent):
+        Interface.__init__(self, name, parent)
+        self.table_content = []
+
+    def execute_interface(self):
+        self.print_content()
+        file_name = str(input("Enter file name:\n"))
+        wb = load_xlsx(file_name)
+        sheets_list = get_sheetnames(wb)
+
+        for n, sh in enumerate(sheets_list, 1):
+            print(f"{n}. {sh}")
+
+        while True:
+            user_responce = int(input('select the option:\n'))
+            if user_responce in range(1, (len(sheets_list)+1)):
+                break
+            else:
+                print('incorrect option, try again')
+
+        self.table_content = processing_xlsx_sheet(
+            wb,
+            sheets_list[user_responce-1]
+            )
         for n, data in enumerate(self.table_content, 1):
             print(f" - {n}. {data[0]}: {', '.join(data[1:])}")
 
@@ -163,6 +206,9 @@ class DBInterface(Interface):
 
 
 class DialogController:
+    """
+    Interaces Handler
+    """
     def __init__(self, main_interface):
         self.main_interface = main_interface
 
